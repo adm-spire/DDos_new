@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Configuration
-input_file = r"dataset\TFTP.csv"  # Replace with your actual file path
+input_file = r"C:\Users\rauna\Downloads\CSV-01-12 (1)\01-12\TFTP.csv"  # Replace with your actual file path
 output_file = r"dataset\stripped_TFTP.csv"  # Output file name
 selected_columns = [
     'Source IP', 'Source Port', 'Average Packet Size', 'Fwd Packet Length Min', 'Packet Length Mean',
@@ -28,7 +28,7 @@ for chunk in pd.read_csv(input_file, low_memory=False, chunksize=chunk_size):
     chunk = chunk[selected_columns]
 
     # Select a percentage of data from this chunk
-    chunk_sampled = chunk.sample(frac=percentage / 100, random_state=42)
+    chunk_sampled = chunk.sample(frac=percentage / 100)  #, random_state=42
 
     # Append processed chunk to the list
     filtered_chunks.append(chunk_sampled)

@@ -2,9 +2,11 @@ import pandas as pd
 import numpy as np
 from scipy.stats import entropy
 import matplotlib.pyplot as plt
+from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
+import time
 
 # Load Source IP and Source Port CSV
-df = pd.read_csv(r"dataset\combined_total.csv")
+df = pd.read_csv(r"dataset\combined_total_changed.csv")
 
 # Ensure column names are correctly formatted
 df.columns = df.columns.str.strip()
@@ -19,6 +21,11 @@ def calculate_entropy(column_values):
 entropy_values = []  # Store entropy for all windows
 windows = []  # Store DataFrames of normal traffic windows
 
+ground_truth = []  # Store ground truth labels
+predictions = []  # Store predicted labels
+
+start_time = time.time()
+
 for start in range(0, len(df), WINDOW_SIZE):
     end = min(start + WINDOW_SIZE, len(df))
     window = df.iloc[start:end]
@@ -27,6 +34,9 @@ for start in range(0, len(df), WINDOW_SIZE):
     entropy_port = calculate_entropy(window['Source Port'])
 
     entropy_values.append((entropy_ip, entropy_port))
+    
+    actual_label = "attack" if "attack" in window["Label"].values else "benign"
+    ground_truth.append(actual_label)
 
 entropy_values = np.array(entropy_values)
 lower_threshold = np.quantile(entropy_values, 0.25)
@@ -45,10 +55,13 @@ for i, (entropy_ip, entropy_port) in enumerate(entropy_values):
     
     if entropy_ip < lower_threshold or entropy_port < lower_threshold:
         attack_results.append((start, end, "DoS Attack Detected"))
+        predictions.append("attack")
     elif entropy_ip > upper_threshold or entropy_port > upper_threshold:
         attack_results.append((start, end, "DDoS Attack Detected"))
+        predictions.append("attack")
     else:
         attack_results.append((start, end, "Normal Traffic"))
+        predictions.append("benign")
         windows.append(df.iloc[start:end])
 
 # Convert results to DataFrame
@@ -64,6 +77,21 @@ if windows:
     print("Normal traffic data saved to CSV.")
 
 print("Attack detection completed and saved to CSV.")
+
+# Compute evaluation metrics
+accuracy = accuracy_score(ground_truth, predictions)
+precision = precision_score(ground_truth, predictions, pos_label="attack")
+recall = recall_score(ground_truth, predictions, pos_label="attack")
+f1 = f1_score(ground_truth, predictions, pos_label="attack")
+
+end_time = time.time()
+runtime = end_time - start_time
+
+print(f"Accuracy: {accuracy:.4f}")
+print(f"Precision: {precision:.4f}")
+print(f"Recall: {recall:.4f}")
+print(f"F1 Score: {f1:.4f}")
+print(f"Runtime: {runtime:.2f} seconds")
 
 # Plot entropy values for IP and Port
 plt.figure(figsize=(12, 6))
@@ -90,4 +118,6 @@ plt.ylabel("Entropy Value")
 plt.title("Entropy Analysis for Attack Detection")
 plt.grid(True)
 plt.show()
+
+
 
