@@ -22,9 +22,13 @@ if "Label" in new_df.columns:
 else:
     raise ValueError("Dataset must contain 'Label' column for evaluation.")
 
+# Drop "Source IP" and "Source Port" if present
+drop_columns = ["Source IP", "Source Port"]
+available_columns = [col for col in drop_columns if col in new_df.columns]
+new_df = new_df.drop(columns=available_columns, errors="ignore")
+
 # Convert numeric columns properly
-for col in new_df.columns:
-    new_df[col] = pd.to_numeric(new_df[col], errors="coerce")  # Convert non-numeric to NaN
+new_df = new_df.apply(pd.to_numeric, errors="coerce")  # Convert non-numeric to NaN
 
 # Replace infinite values with NaN
 new_df.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
@@ -101,4 +105,5 @@ plt.title("Majority Predicted Label Per Window")
 plt.xticks(range(1, len(majority_labels) + 1))
 plt.grid()
 plt.show()
+
 

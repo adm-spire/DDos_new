@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Configuration
-input_file = r"C:\Users\rauna\Downloads\CSV-01-12 (1)\01-12\TFTP.csv"  # Replace with your actual file path
-output_file = r"dataset\stripped_TFTP.csv"  # Output file name
+input_file = r"dataset\custom_balanced_DNS.csv"  # Replace with your actual file path
+output_file = r"dataset\stripped_custom_balanced_DNS.csv"  # Output file name
 selected_columns = [
     'Source IP', 'Source Port', 'Average Packet Size', 'Fwd Packet Length Min', 'Packet Length Mean',
     'Subflow Fwd Bytes', 'Fwd Packet Length Mean', 'Total Length of Fwd Packets', 'Fwd Packet Length Max',
@@ -10,7 +10,7 @@ selected_columns = [
     'Flow Bytes/s', 'Fwd IAT Min', 'Fwd IAT Max', 'Flow IAT Min', 'Flow IAT Max', 'Flow Packets/s',
     'Flow Duration', 'Fwd Packets/s', 'Label'
 ]
-percentage = 15  # Percentage of data to select (e.g., 50% of the dataset)
+percentage = 100  # Percentage of data to select (e.g., 50% of the dataset)
 chunk_size = 100000  # Number of rows per chunk
 
 # Initialize an empty list to collect filtered chunks

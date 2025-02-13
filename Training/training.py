@@ -33,8 +33,10 @@ for i, feature_file in enumerate(feature_files, start=1):
     if "Label" not in df.columns:
         raise ValueError(f"Column 'Label' not found in {feature_file}")
 
-    # Extract features and target
-    X = df.drop(columns=["Label"])  # Features
+    # Drop unwanted columns
+    drop_columns = ["Source IP", "Source Port", "Label"]
+    available_columns = [col for col in drop_columns if col in df.columns]
+    X = df.drop(columns=available_columns, errors="ignore")  # Features
     y = df["Label"]  # Target
 
     # Convert all columns to numeric (invalid values become NaN)
@@ -80,3 +82,4 @@ for i, feature_file in enumerate(feature_files, start=1):
     print(f"Accuracy after training on {feature_file}: {accuracy:.4f}\n")
 
 print("Training complete!")
+

@@ -13,13 +13,13 @@ new_data_file = r"dataset\normal_traffic.csv"
 # Load new data
 new_df = pd.read_csv(new_data_file, low_memory=False)
 
-# Ensure "Label" column is not present in inference data
-if "Label" in new_df.columns:
-    new_df = new_df.drop(columns=["Label"])
+# Drop unwanted columns if they exist
+drop_columns = ["Source IP", "Source Port", "Label"]
+available_columns = [col for col in drop_columns if col in new_df.columns]
+new_df = new_df.drop(columns=available_columns, errors="ignore")
 
 # Convert numeric columns properly
-for col in new_df.columns:
-    new_df[col] = pd.to_numeric(new_df[col], errors="coerce")  # Convert non-numeric to NaN
+new_df = new_df.apply(pd.to_numeric, errors="coerce")  # Convert non-numeric to NaN
 
 # Replace infinite values with NaN
 new_df.replace([float("inf"), float("-inf")], pd.NA, inplace=True)
