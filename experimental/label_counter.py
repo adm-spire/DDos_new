@@ -2,7 +2,7 @@ import pandas as pd
 from collections import Counter
 
 # Define input file path
-input_file = r"dataset\custom_balanced_TFTP.csv"  # Change this to your actual dataset file
+input_file = r"dataset\custom_balanced_DNS.csv"  # Change this to your actual dataset file
 
 # Dictionary to store label counts
 label_counts = Counter()

@@ -2,7 +2,7 @@ import pandas as pd
 import matplotlib.pyplot as plt
 
 # Load the CSV file
-csv_file = r"dataset\custom_balanced_DNS.csv"
+csv_file = r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\stripped_custom_2.csv"
 df = pd.read_csv(csv_file)
 
 # Ensure column names are correctly formatted

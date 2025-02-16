@@ -8,7 +8,7 @@ model_path = "sequential_decision_tree_model.joblib"
 dt_model = joblib.load(model_path)
 
 # Path to the new data file
-new_data_file = r"dataset\normal_traffic.csv"
+new_data_file = r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\stripped_custom_2.csv"
 
 # Load new data
 new_df = pd.read_csv(new_data_file, low_memory=False)

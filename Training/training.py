@@ -10,7 +10,7 @@ feature_files = [
     r"dataset\part_1.csv",
     r"dataset\part_2.csv",
     r"dataset\part_3.csv",
-    r"dataset\normal_traffic.csv"
+    r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\stripped_custom.csv"
 ]
 
 # Initialize the Decision Tree model

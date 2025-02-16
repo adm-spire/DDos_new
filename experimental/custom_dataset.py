@@ -8,7 +8,7 @@ output_file = r"dataset\custom_balanced_DNS.csv"
 chunk_size = 100000  # Adjust based on memory constraints
 
 # Define attack-to-benign ratio (adjustable)
-target_attack_ratio = 0.01  # Between 50-60% attack traffic
+target_attack_ratio = 0.001  # Between 50-60% attack traffic
 
 # Create output file and write header in the first chunk
 first_chunk = True

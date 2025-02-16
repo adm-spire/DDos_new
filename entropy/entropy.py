@@ -6,7 +6,7 @@ from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_sc
 import time
 
 # Load Source IP and Source Port CSV
-df = pd.read_csv(r"dataset\stripped_custom_balanced_DNS.csv")
+df = pd.read_csv(r"c:\Users\rauna\OneDrive\Desktop\ddos_detector\captured_traffic.csv")
 
 # Ensure column names are correctly formatted
 df.columns = df.columns.str.strip()
@@ -36,9 +36,9 @@ for start in range(0, len(df), WINDOW_SIZE):
     entropy_values.append((entropy_ip, entropy_port))
     
     # ✅ Fix: Assign label correctly
-    attack_labels = window["Label"].unique()  # Get unique labels in the window
-    actual_label = "attack" if any(lbl != "benign" for lbl in attack_labels) else "benign"
-    ground_truth.append(actual_label)
+    #attack_labels = window["Label"].unique()  # Get unique labels in the window
+    #actual_label = "attack" if any(lbl != "benign" for lbl in attack_labels) else "benign"
+    #ground_truth.append(actual_label)
 
 # Convert to NumPy array
 entropy_values = np.array(entropy_values)
@@ -83,7 +83,7 @@ if windows:
 
 print("Attack detection completed and saved to CSV.")
 
-# ✅ Fix: Handle no attack cases by using `zero_division=1`
+
 accuracy = accuracy_score(ground_truth, predictions)
 precision = precision_score(ground_truth, predictions, pos_label="attack", zero_division=1)
 recall = recall_score(ground_truth, predictions, pos_label="attack", zero_division=1)

@@ -1,8 +1,8 @@
 import pandas as pd
 
 # Input and output file paths
-input_file = r"dataset\combined_total.csv"  # Replace with your actual file path
-output_file = r"dataset\combined_total_changed.csv"
+input_file = r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\merged_balanced.csv" # Replace with your actual file path
+output_file = r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\merged_balanced_changed.csv"
 
 # Define chunk size
 chunk_size = 10000  # Adjust based on memory availability

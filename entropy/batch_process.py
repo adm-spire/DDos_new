@@ -1,7 +1,7 @@
 import pandas as pd
 
 # Input file path
-input_file = r"dataset\normal_traffic.csv"
+input_file = r"C:\Users\rauna\OneDrive\Desktop\DDOS_upgraded\dataset\stripped_custom.csv"
 
 # Read the dataset
 df = pd.read_csv(input_file)
