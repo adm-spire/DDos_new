@@ -1,14 +1,14 @@
 import pandas as pd
 
-# Input and output file paths
-input_file = r"C:\Users\rauna\Downloads\CSV-01-12 (1)\01-12\DrDoS_DNS.csv"
-output_file = r"dataset\custom_balanced_DNS.csv"
+# Input and output file path
+input_file = r"C:\Users\rauna\Downloads\CSV-01-12 (1)\01-12\DrDoS_LDAP.csv"
+output_file = r"dataset\custom_balanced_LDAP.csv"
 
 # Chunk size for processing
 chunk_size = 100000  # Adjust based on memory constraints
 
 # Define attack-to-benign ratio (adjustable)
-target_attack_ratio = 0.001  # Between 50-60% attack traffic
+target_attack_ratio = 0.004  # Between 50-60% attack traffic
 
 # Create output file and write header in the first chunk
 first_chunk = True
@@ -19,7 +19,7 @@ with pd.read_csv(input_file, chunksize=chunk_size, low_memory=False) as reader:
         print(f"Processing chunk {i + 1}...")
 
         # Drop unnecessary columns
-        drop_columns = ["Flow ID", "Timestamp",  "Destination IP",  "Destination Port" , "Unnamed: 0"]
+        drop_columns = ["Flow ID",   "Destination IP",  "Destination Port" , "Unnamed: 0"]
         chunk.drop(columns=[col for col in drop_columns if col in chunk.columns], errors="ignore", inplace=True)
 
         # Ensure "Label" column exists
