@@ -1,12 +1,11 @@
 import pandas as pd
 import numpy as np
-from scipy.stats import entropy
 import matplotlib.pyplot as plt
 from sklearn.metrics import accuracy_score, precision_score, recall_score, f1_score
 import time
 
 # Load Source IP and Source Port CSV
-df = pd.read_csv(r"c:\Users\rauna\OneDrive\Desktop\ddos_detector\captured_traffic.csv")
+df = pd.read_csv(r"dataset/stripped_custom_2.csv")
 
 # Ensure column names are correctly formatted
 df.columns = df.columns.str.strip()
@@ -14,9 +13,18 @@ df.columns = df.columns.str.strip()
 # Window size for entropy calculation
 WINDOW_SIZE = 40000
 
-def calculate_entropy(column_values):
+# Phi entropy parameter
+ALPHA = 2  # Adjust as needed
+
+def calculate_phi_entropy(column_values, alpha=ALPHA):
     value_counts = column_values.value_counts(normalize=True)  # Probability of each occurrence
-    return entropy(value_counts, base=2)  # Using log base 2 for entropy
+    probabilities = value_counts.values
+    
+    if alpha == 1:
+        return -np.sum(probabilities * np.log2(probabilities))  # Shannon entropy (limit case)
+    
+    phi_entropy = (1 - np.sum(probabilities ** alpha)) / (alpha - 1)
+    return phi_entropy
 
 entropy_values = []  # Store entropy for all windows
 windows = []  # Store DataFrames of normal traffic windows
@@ -30,15 +38,14 @@ for start in range(0, len(df), WINDOW_SIZE):
     end = min(start + WINDOW_SIZE, len(df))
     window = df.iloc[start:end]
 
-    entropy_ip = calculate_entropy(window['Source IP'])
-    entropy_port = calculate_entropy(window['Source Port'])
+    entropy_ip = calculate_phi_entropy(window['Source IP'])
+    entropy_port = calculate_phi_entropy(window['Source Port'])
 
     entropy_values.append((entropy_ip, entropy_port))
     
-    # ✅ Fix: Assign label correctly
-    #attack_labels = window["Label"].unique()  # Get unique labels in the window
-    #actual_label = "attack" if any(lbl != "benign" for lbl in attack_labels) else "benign"
-    #ground_truth.append(actual_label)
+    attack_labels = window["Label"].unique()  # Get unique labels in the window
+    actual_label = "attack" if any(lbl != "benign" for lbl in attack_labels) else "benign"
+    ground_truth.append(actual_label)
 
 # Convert to NumPy array
 entropy_values = np.array(entropy_values)
@@ -83,7 +90,6 @@ if windows:
 
 print("Attack detection completed and saved to CSV.")
 
-
 accuracy = accuracy_score(ground_truth, predictions)
 precision = precision_score(ground_truth, predictions, pos_label="attack", zero_division=1)
 recall = recall_score(ground_truth, predictions, pos_label="attack", zero_division=1)
@@ -100,8 +106,8 @@ print(f"Runtime: {runtime:.2f} seconds")
 
 # Plot entropy values for IP and Port
 plt.figure(figsize=(12, 6))
-plt.plot(range(len(entropy_values)), entropy_values[:, 0], label="Entropy (Source IP)", marker='o', linestyle='-', color='b')
-plt.plot(range(len(entropy_values)), entropy_values[:, 1], label="Entropy (Source Port)", marker='s', linestyle='-', color='c')
+plt.plot(range(len(entropy_values)), entropy_values[:, 0], label="Phi Entropy (Source IP)", marker='o', linestyle='-', color='b')
+plt.plot(range(len(entropy_values)), entropy_values[:, 1], label="Phi Entropy (Source Port)", marker='s', linestyle='-', color='c')
 
 # Plot threshold lines
 plt.axhline(y=lower_threshold, color='r', linestyle='--', label="Lower Threshold")
@@ -119,10 +125,11 @@ plt.legend(unique_labels.values(), unique_labels.keys())
 
 # Labels and title
 plt.xlabel("Window Number")
-plt.ylabel("Entropy Value")
-plt.title("Entropy Analysis for Attack Detection")
+plt.ylabel("Phi Entropy Value")
+plt.title("Phi Entropy Analysis for Attack Detection")
 plt.grid(True)
 plt.show()
+
 
 
 
