@@ -14,17 +14,20 @@ df.columns = df.columns.str.strip()
 WINDOW_SIZE = 40000
 
 # Phi entropy parameter
-ALPHA = 2  # Adjust as needed
+ALPHA = 0.5  # Adjust as needed
 
-def calculate_phi_entropy(column_values, alpha=ALPHA):
+def calculate_phi_entropy(column_values, alpha=2):
     value_counts = column_values.value_counts(normalize=True)  # Probability of each occurrence
     probabilities = value_counts.values
-    
-    if alpha == 1:
-        return -np.sum(probabilities * np.log2(probabilities))  # Shannon entropy (limit case)
-    
-    phi_entropy = (1 - np.sum(probabilities ** alpha)) / (alpha - 1)
-    return phi_entropy
+
+    if alpha == 1:  # Shannon entropy
+        return -np.sum(probabilities * np.log2(probabilities))
+
+    elif alpha > 1:  # Rényi entropy
+        return np.log2(np.sum(probabilities ** alpha)) / (1 - alpha)
+
+    else:  # Tsallis entropy (α ≠ 1, usually α > 0)
+        return (1 - np.sum(probabilities ** alpha)) / (alpha - 1)
 
 entropy_values = []  # Store entropy for all windows
 windows = []  # Store DataFrames of normal traffic windows
@@ -117,11 +120,11 @@ plt.axhline(y=upper_threshold, color='g', linestyle='--', label="Upper Threshold
 for attack_type, color in attack_colors.items():
     indices = [i for i, (_, _, atype) in enumerate(attack_results) if atype == attack_type]
     plt.scatter(indices, entropy_values[indices, 0], color=color, label=attack_type, s=100, edgecolors='black')
+    plt.scatter(indices, entropy_values[indices, 1], color=color, label=attack_type, s=100, edgecolors='black')
 
-# Remove duplicate legend entries
-handles, labels = plt.gca().get_legend_handles_labels()
-unique_labels = dict(zip(labels, handles))
-plt.legend(unique_labels.values(), unique_labels.keys())
+plt.legend()
+
+
 
 # Labels and title
 plt.xlabel("Window Number")
